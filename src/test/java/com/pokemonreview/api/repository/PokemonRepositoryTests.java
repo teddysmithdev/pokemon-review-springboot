@@ -98,7 +98,7 @@ public class PokemonRepositoryTests {
     }
 
     @Test
-    public void PokemonRepository_DeletePokemon_ReturnPokemonNotNull() {
+    public void PokemonRepository_PokemonDelete_ReturnPokemonIsEmpty() {
         Pokemon pokemon = Pokemon.builder()
                 .name("pikachu")
                 .type("electric").build();
@@ -106,9 +106,10 @@ public class PokemonRepositoryTests {
         pokemonRepository.save(pokemon);
 
         pokemonRepository.deleteById(pokemon.getId());
-
         Optional<Pokemon> pokemonReturn = pokemonRepository.findById(pokemon.getId());
 
         Assertions.assertThat(pokemonReturn).isEmpty();
     }
+
+
 }
