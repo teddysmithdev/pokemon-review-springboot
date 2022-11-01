@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -63,5 +64,51 @@ public class PokemonRepositoryTests {
         Pokemon pokemonList = pokemonRepository.findById(pokemon.getId()).get();
 
         Assertions.assertThat(pokemonList).isNotNull();
+    }
+
+    @Test
+    public void PokemonRepository_FindByType_ReturnPokemonNotNull() {
+        Pokemon pokemon = Pokemon.builder()
+                .name("pikachu")
+                .type("electric").build();
+
+        pokemonRepository.save(pokemon);
+
+        Pokemon pokemonList = pokemonRepository.findByType(pokemon.getType()).get();
+
+        Assertions.assertThat(pokemonList).isNotNull();
+    }
+
+    @Test
+    public void PokemonRepository_UpdatePokemon_ReturnPokemonNotNull() {
+        Pokemon pokemon = Pokemon.builder()
+                .name("pikachu")
+                .type("electric").build();
+
+        pokemonRepository.save(pokemon);
+
+        Pokemon pokemonSave = pokemonRepository.findById(pokemon.getId()).get();
+        pokemonSave.setType("Electric");
+        pokemonSave.setName("Raichu");
+
+        Pokemon updatedPokemon = pokemonRepository.save(pokemonSave);
+
+        Assertions.assertThat(updatedPokemon.getName()).isNotNull();
+        Assertions.assertThat(updatedPokemon.getType()).isNotNull();
+    }
+
+    @Test
+    public void PokemonRepository_DeletePokemon_ReturnPokemonNotNull() {
+        Pokemon pokemon = Pokemon.builder()
+                .name("pikachu")
+                .type("electric").build();
+
+        pokemonRepository.save(pokemon);
+
+        pokemonRepository.deleteById(pokemon.getId());
+
+        Optional<Pokemon> pokemonReturn = pokemonRepository.findById(pokemon.getId());
+
+        Assertions.assertThat(pokemonReturn).isEmpty();
     }
 }
