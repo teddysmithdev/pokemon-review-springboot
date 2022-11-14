@@ -3,10 +3,12 @@ package com.pokemonreview.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pokemonreview.api.controllers.PokemonController;
 import com.pokemonreview.api.dto.PokemonDto;
+import com.pokemonreview.api.dto.PokemonResponse;
 import com.pokemonreview.api.dto.ReviewDto;
 import com.pokemonreview.api.models.Pokemon;
 import com.pokemonreview.api.models.Review;
 import com.pokemonreview.api.service.PokemonService;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +24,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Arrays;
+
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(controllers = PokemonController.class)
@@ -58,6 +64,22 @@ public class PokemonControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pokemonDto)));
 
-        response.andExpect(MockMvcResultMatchers.status().isCreated());
+        response.andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", CoreMatchers.is(pokemonDto.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type", CoreMatchers.is(pokemonDto.getType())));
+    }
+
+    @Test
+    public void PokemonController_GetAllPokemon_ReturnResponseDto() throws Exception {
+        PokemonResponse responseDto = PokemonResponse.builder().pageSize(10).last(true).pageNo(1).content(Arrays.asList(pokemonDto)).build();
+        when(pokemonService.getAllPokemon(1,10)).thenReturn(responseDto);
+
+        ResultActions response = mockMvc.perform(get("/api/pokemon")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("pageNo","1")
+                .param("pageSize", "10"));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content.size()", CoreMatchers.is(responseDto.getContent().size())));
     }
 }
