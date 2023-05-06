@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class PokemonRepositoryTests {
@@ -31,8 +33,8 @@ public class PokemonRepositoryTests {
         Pokemon savedPokemon = pokemonRepository.save(pokemon);
 
         //Assert
-        Assertions.assertThat(savedPokemon).isNotNull();
-        Assertions.assertThat(savedPokemon.getId()).isGreaterThan(0);
+        assertThat(savedPokemon).isNotNull();
+        assertThat(savedPokemon.getId()).isPositive();
     }
 
     @Test
@@ -49,8 +51,8 @@ public class PokemonRepositoryTests {
 
         List<Pokemon> pokemonList = pokemonRepository.findAll();
 
-        Assertions.assertThat(pokemonList).isNotNull();
-        Assertions.assertThat(pokemonList.size()).isEqualTo(2);
+        assertThat(pokemonList).isNotNull();
+        assertThat(pokemonList.size()).isEqualTo(2);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class PokemonRepositoryTests {
 
         Pokemon pokemonList = pokemonRepository.findById(pokemon.getId()).get();
 
-        Assertions.assertThat(pokemonList).isNotNull();
+        assertThat(pokemonList).isNotNull();
     }
 
     @Test
@@ -76,7 +78,7 @@ public class PokemonRepositoryTests {
 
         Pokemon pokemonList = pokemonRepository.findByType(pokemon.getType()).get();
 
-        Assertions.assertThat(pokemonList).isNotNull();
+        assertThat(pokemonList).isNotNull();
     }
 
     @Test
@@ -93,8 +95,8 @@ public class PokemonRepositoryTests {
 
         Pokemon updatedPokemon = pokemonRepository.save(pokemonSave);
 
-        Assertions.assertThat(updatedPokemon.getName()).isNotNull();
-        Assertions.assertThat(updatedPokemon.getType()).isNotNull();
+        assertThat(updatedPokemon.getName()).isNotNull();
+        assertThat(updatedPokemon.getType()).isNotNull();
     }
 
     @Test
@@ -108,7 +110,7 @@ public class PokemonRepositoryTests {
         pokemonRepository.deleteById(pokemon.getId());
         Optional<Pokemon> pokemonReturn = pokemonRepository.findById(pokemon.getId());
 
-        Assertions.assertThat(pokemonReturn).isEmpty();
+        assertThat(pokemonReturn).isEmpty();
     }
 
 
