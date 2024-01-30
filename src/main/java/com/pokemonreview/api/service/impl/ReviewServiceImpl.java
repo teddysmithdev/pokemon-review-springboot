@@ -53,7 +53,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException("Review with associate pokemon not found"));
 
         if(review.getPokemon().getId() != pokemon.getId()) {
-            throw new ReviewNotFoundException("This review does not belond to a pokemon");
+            throw new ReviewNotFoundException("This review does not belong to a pokemon");
         }
 
         return mapToDto(review);
